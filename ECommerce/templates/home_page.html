@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block base_head %}
+  <!--<link rel="stylesheet" href="{% static 'css\main.css' %}">-->
+{% endblock %}
+{% block content %}
+{% if request.user.is_authenticated %}
+<div class="row">
+    <div class="col">
+        <h1>{{ premiumContent }}</h1>
+    </div>
+</div>
+{% endif %}
+
+    <div id="carouselExampleCaptions" class="carousel slide carousel-fade"  data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
+        </ol>
+        <div class="carousel-inner" style="height: 15em">
+            <div class="carousel-item active">
+                <img src="{% static 'img/trolleyBanner.jpg'%}" class=" w-100 carousel-img" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="{% static 'img/fruitsBanner.jpg'%}" class=" w-100 carousel-img" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Freshness Overload</h5>
+                    <p>Your items will be at your doorsteps fresher than ever</p>
+                </div>
+            </div>
+           
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
+    
+
+<div class="container my-3">
+    <h3 class="section-subtitle text-left">Featured</h3>
+    <div class="row">
+        <div class="col">
+            <ul class="inline">
+                {% for obj in object_list %}
+                 <li class="list-inline-item">
+                            {% include "products/snippets/card.html" with instance=obj%}
+                            
+                            {% if forloop.counter|divisibleby:6 %}
+                                    </li>
+                                </ul>
+                                <div class="col-12"><hr></div>
+                                <ul class="inline">
+                                    <li class="list-inline-item">
+                            {% else %}
+                                </li>
+                            {%endif%}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+       
+
+{% endblock  %}
+

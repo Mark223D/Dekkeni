@@ -1,0 +1,29 @@
+<a href="{{ instance.get_absolute_url }}">
+
+<div class="card" style="width: 10rem;">
+    {% if instance.image %}
+        <a href="{{ instance.get_absolute_url }}">
+
+            <img src="{{ instance.image.url }}" class="card-img-top py-4 img-thumbnail img-responsive" alt="{{ instance.title }}">
+        </a>
+    {% endif %}
+  <div class="card-body text-center" style="height: 10em">
+      <h6 class="card-title"><b>{{ instance.title|truncatewords:4 }}</b></h6>
+      <p class="card-text ">{{ instance.description | truncatewords:5 }}</p>
+    
+      <!--<div class="row py-4">-->
+          <!--<div class="col">-->
+            <!---->
+            <!--&lt;!&ndash;<a href="{{ instance.get_absolute_url }}" class="btn btn-primary">View</a>&ndash;&gt;-->
+          <!--</div>-->
+      <!--</div>-->
+      
+  </div>
+    <div class="row  pb-4 pt-auto">
+        <div class="col">
+            
+            {% include 'products/snippets/update-cart.html' with product=instance cart=cart %}
+        </div>
+    </div>
+</div>
+</a>

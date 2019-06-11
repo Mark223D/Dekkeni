@@ -15,15 +15,92 @@ class ProductFeaturedListView(ListView):
         request = self.request
         return Product.objects.all().featured()
 
+class ProductNewArrivalsListView(ListView):
+    template_name = "products/list.html"
+
+    def get_queryset(self, *args, **kwargs):
+        request = self.request
+        return Product.objects.all().new_arrivals()
+
+class ProductHotDealsListView(ListView):
+    template_name = "products/list.html"
+
+    def get_queryset(self, *args, **kwargs):
+        request = self.request
+        return Product.objects.all().hot_deals()
 
 class ProductFeaturedDetailView(ObjectViewedMixin,DetailView):
     queryset = Product.objects.all().featured()
     template_name = "products/featured-detail.html"
 
-    # def get_queryset(self, *args, **kwargs):
-    #     request = self.request
-    #     return 
+class ProductNewArrivalsDetailView(ObjectViewedMixin,DetailView):
+    queryset = Product.objects.all().featured()
+    template_name = "products/featured-detail.html"
 
+class ProductHotDealsDetailView(ObjectViewedMixin,DetailView):
+    queryset = Product.objects.all().featured()
+    template_name = "products/featured-detail.html"
+
+
+
+def product_list_view(request):
+    queryset = Product.objects.all()
+    context = {
+        'object_list': queryset
+    }
+    return render(request, "products/list.html", context)
+
+
+
+'''
+ -------------- CATEGORIES VIEWS------------
+ 
+'''
+class CategorytListView(ListView):
+    queryset = Product.objects.all()
+    template_name = "products/category-list.html"
+
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(CategorytListView, self).get_context_data(*args, **kwargs)
+        cart_obj, new_obj = Cart.objects.new_or_get(self.request)
+        context['cart'] = cart_obj
+        path_elem = self.request.path.split('/')
+        try:
+            cat = path_elem[2]
+            context['category'] = cat
+        except IndexError:
+            print("No Category")
+
+        try:
+            sub = path_elem[3]
+            context['subcategory'] = sub
+        except IndexError:
+            print("No SubCategory")
+        
+        try:
+            subsub = path_elem[4]
+            context['subsubcategory'] = subsub
+        except IndexError:
+            print("No Subsubcategory")
+
+        try:
+            product = path_elem[5]
+            context['product'] = product
+        except IndexError:
+            print("No Product")
+
+        return context
+
+
+    def get_queryset(self, *args, **kwargs):
+        request = self.request
+        return Product.objects.all()
+
+'''
+ -------------- PRODUCTS VIEWS------------
+ 
+'''
 
 class ProductListView(ListView):
     queryset = Product.objects.all()
@@ -40,13 +117,6 @@ class ProductListView(ListView):
         request = self.request
         return Product.objects.all()
 
-
-def product_list_view(request):
-    queryset = Product.objects.all()
-    context = {
-        'object_list': queryset
-    }
-    return render(request, "products/list.html", context)
 
 class ProductDetailSlugView(ObjectViewedMixin, DetailView):
     queryset = Product.objects.all()
@@ -81,6 +151,12 @@ class ProductDetailSlugView(ObjectViewedMixin, DetailView):
 
 
 
+'''
+ -------------- TEMP VIEWS------------
+
+'''
+
+
 class ProductDetailView(DetailView):
     queryset = Product.objects.all()
     template_name = "products/detail.html"
@@ -100,23 +176,7 @@ class ProductDetailView(DetailView):
             raise Http404("Product Doesn't Exist")
         return instance
 
-    # def get_queryset(self, *args, **kwargs):
-    #     request = self.request
-    #     pk = self.kwargs.get("pk")
-    #     return Product.objects.filter(pk=pk)
-
 def product_detail_view(request, pk=None, *args, **kwargs):
-    # instance = Product.objects.get(pk=pk, featured=True) #id
-    # instance = get_object_or_404(Product, pk=pk) #id
-
-    # try:
-    #     instance = Product.objects.get(id=pk)
-    # except Product.DoesNotExist:
-    #     print("no product here")
-    #     raise Http404("Product Doesn't Exist")
-    # except:
-    #     print("huh?")
-
 
     instance = Product.objects.get_by_id(pk)
     if instance is None :

@@ -1,46 +1,64 @@
 {% load static %}
+{% url 'contact'  as contact_url %}
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script src="https://kit.fontawesome.com/1bad05388b.js"></script>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script src="https://kit.fontawesome.com/1bad05388b.js"></script>
 
-    {% include "base/css.html" %}
-    {% block base_head %}
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,800,900&display=swap" rel="stylesheet">
+  {% include "base/css.html" %}
+  {% block base_head %}
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,800,900&display=swap" rel="stylesheet">
   
-    {% endblock %}
-    <title>eCommerce</title>
-  </head>
-  <body>
+  {% endblock %}
+  <title>eCommerce</title>
+</head>
+<body>
   <style rel="stylesheet" type="text/css">
-  body{
-    font-family: 'Montserrat', sans-serif;
-  
-  }
-  
+    body{
+      font-family: 'Montserrat', sans-serif;
+
+    }
+    .dropdown:hover > .dropdown-menu {
+    display: block;
+}
+.dropdown > .dropdown-toggle:active {
+    /*Without this, clicking will make it sticky*/
+    pointer-events: none;
+}
+
+
   </style>
-    {% include "base/navbar.html" with brand_name='eCommerce'%}
-    <div class="container text-center">
-        {% if messages %}
-<div class="alert alert-success messages">
-    {% for message in messages %}
-    <span{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-        {{ message }}
-        <br/>
-    </span>
-    {% endfor %}
-</div>
-{% endif %}
+  {% include "base/navbar.html" with brand_name='eCommerce'%}
 
-        {% block content %} 
-
-        {% endblock %}
+      <div class="container">
+    <div class="row mt-2">
     </div>
-      {% include "base/js.html" %}
-    
+  </div>
+      <div class="container text-center">
+        {% if messages %}
+        <div class="alert alert-success messages">
+          {% for message in messages %}
+          <span{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+          {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+          {{ message }}
+          <br/>
+        </span>
+        {% endfor %}
+      </div>
+      {% endif %}
 
-  </body>
+      <div class="row my-2"></div>
+
+      {% block content %} 
+
+      {% endblock %}
+    </div>
+  {% include "base/footer.html" %}
+
+    
+  {% include "base/js.html" %}
+</body>
 </html>

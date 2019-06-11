@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}  
+        {% include "breadcrumbs.html" %}
+<style type="text/css">
+    a {
+        color: #495057;
+    }
+
+    a:hover {
+        color: #495057;
+    }
+</style>
+ {% if subsubcategory %}
+     {% for obj in subsubcategories %}
+                {% if subsubcategory == obj.slug %} 
+                    <div class="row">
+                    {% for obj in object_list %}
+                        {% if obj.subcategory.slug == subcategory %} 
+                                <div class="col" >
+                                    {% include "products/snippets/card.html" with instance=obj%}
+                                </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+        {% endfor %}
+
+
+    {% else %}
+        {% if subcategory %}
+         {% for obj in subcategories %}
+                    {% if subcategory == obj.slug %} 
+                        {% for obj in subsubcategories %}
+                            {% if obj.subcategory.slug == subcategory %} 
+                                <div class="row">
+                                    <div class="col-12 text-left" >
+                                        <a href="{{ obj.get_absolute_url }}"class="lead">{{ obj.title }}</a> 
+                                        <hr/>
+                                    </div>
+                                     {% for product in object_list %}
+                                {% if product.subsubcategory.slug == obj.slug%}
+                                    <div class="col" >
+                                        {% include "products/snippets/card.html" with instance=product%}
+                                    </div>
+
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+            {% endfor %}
+        {% else %}
+            {% for obj in categories %}
+                    {% if category == obj.slug %} 
+                        {% for sub in subcategories %}
+                            {% if sub.category.slug == category %} 
+                                <div class="row">
+                                    <div class="col-12 text-left" >
+                                        <a href="{{ obj.get_absolute_url }}"class="lead">{{ sub.title }}</a> 
+                                    <hr/>
+                                    </div>
+                                     {% for product in object_list %}
+                                {% if product.subcategory.slug == sub.slug%}
+                                    <div class="col" >
+                                        {% include "products/snippets/card.html" with instance=product%}
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endblock  %}

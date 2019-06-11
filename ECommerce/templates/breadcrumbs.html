@@ -1,0 +1,38 @@
+
+<nav aria-label="breadcrumb" >
+    <ol class="breadcrumb" style="background-color: #fff;" >
+    {% if category %}
+     {% for obj in categories %}
+            
+                {% if category == obj.slug %} 
+                        <li class="breadcrumb-item {% if not subcategory %}active{% endif %}"><a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a></li>
+                {% endif %}
+            
+        {% endfor %}
+
+        {% if subcategory %}
+            {% for obj in subcategories %}
+                        {% if subcategory == obj.slug %} 
+                        <li class="breadcrumb-item {% if not subsubcategory %}active{% endif %}"><a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a></li>
+                        {% endif %}
+            {% endfor %}
+        {% endif %}
+             
+        {% if subsubcategory %}
+                {% for obj in subsubcategories %}
+                    {% if subsubcategory == obj.slug %} 
+                        <li class="breadcrumb-item {% if not product %} active {% endif %}"><a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a></li>
+                    {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        {% if product %}
+                {% for obj in object_list %}
+                    {% if product == obj.slug %} 
+                        <li class="breadcrumb-item active" aria-current="page">{{ obj.title }}</li>                        
+                    {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+  </ol>
+</nav>

@@ -1,5 +1,4 @@
 {% url 'home'  as home_url %}
-{% url 'contact'  as contact_url %}
 {% url 'products:list'  as products_list_url %}
 {% url 'login'  as login_url %}
 {% url 'register'  as register_url %}
@@ -7,33 +6,22 @@
 {% url 'logout'  as logout_url %}
 
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3 ">
-  <div class="container py-1">
-
+<div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" style="">
+  <div class="container">
+<div class="row">
   <a class="navbar-brand" href="{{home_url}}">
         <img src="http://getbootstrap.com/docs/4.3/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
 
   {% if brand_name %} {{ brand_name }} {%else%}Mark Ecommerce{% endif %}</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+  </a>
+  </div>
+
+  {% include 'search/snippets/search-form.html'%}
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item {% if request.path == home_url %} active {%endif%}">
-        <a class="nav-link" href="{{ home_url }}">Home <span class="sr-only">(current)</span></a>
-      </li>
+    <ul class="navbar-nav ml-auto mr-0">
 
-      <li class="nav-item {% if request.path == products_list_url %} active {%endif%}">
-        <a class="nav-link " href="{{ products_list_url }}">Products</a>
-      </li>
-  
-      <li class="nav-item {% if request.path == contact_url %} active {%endif%}">
-        <a class="nav-link" href="{{ contact_url }}">Contact</a>
-      </li>
-  
-    </ul>
-    <ul class="navbar-nav ml-auto mr-3">
       <li class="nav-item {% if request.path == cart_url %} active {%endif%} ">
         <a class="nav-link " href="{{ cart_url }}"> <span class="navbar-cart-count">{{ request.session.cart_items }} </span><i class="fas fa-shopping-cart"></i></a>
       </li>
@@ -50,21 +38,55 @@
         <a class="nav-link " href="{{ login_url }}">Login</a>
       </li>
       {% endif %}
-      <!-- <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown
-          </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Something else here</a>
-          </div>
-        </li> -->
-      
     </ul>
-    {% include 'search/snippets/search-form.html'%}
+
 
   </div>
-  </div>
+  
+
 </nav>
+
+    <div class="row mt-5" style="" >
+      <div class="col-12 mt-4 " style="color: #000;">
+        <ul class="list-unstyled list-group list-group-horizontal-md justify-content-center">
+
+        <li class="dropdown unstyled px" >
+            <a href="#" class="nav-item list-group-item list-group-item-action text-center dropdown-toggle inline text-nowrap px-4" 
+            style="font-size: 0.65rem; text-transform: uppercase;"
+            aria-haspopup="true" aria-expanded="true" role="button" id="categoryDropdown" data-toggle="dropdown">
+            <b>All Categories</b>
+          </a>
+
+          <div class="dropdown-menu dropdown-menu-down" aria-labelledby="categoryDropdown">
+            {% for category in categories %}
+                <a href="{{ category.get_absolute_url }}" class="dropdown-item" >{{ category.title }}</a>
+            {% endfor %}
+          </div>
+
+
+          {% for category in categories %}
+              <li class="dropdown unstyled">
+                  <a href="{{ category.get_absolute_url }}" class="nav-item list-group-item list-group-item-action text-center dropdown inline text-nowrap px-4" style="font-size: 0.65rem; text-transform: uppercase;" aria-haspopup="true" aria-expanded="true" id="categoryDropdown">
+                    <b>
+                      {{ category.title }}
+                    </b>
+                  </a>
+
+                  {% for subcategory in subcategories %}
+                    {% if category.title == subcategory.category.title %}
+                      <div class="dropdown-menu dropdown-menu-down" aria-labelledby="categoryDropdown">
+                        {% for subcategory in subcategories %}
+                          {% if category.title == subcategory.category.title %}
+                            <a href="{{ subcategory.get_absolute_url }}" class="dropdown-item" >{{ subcategory.title }}</a>
+                            {% endif %}
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+          {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+

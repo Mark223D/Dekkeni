@@ -1,0 +1,2 @@
+web: gunicorn eommerce.wsgi
+web: python manage.py runserver

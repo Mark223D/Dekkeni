@@ -6,7 +6,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import  DetailView
 from carts.models import Cart
 
-from analytics.mixins import ObjectViewedMixin
+# from analytics.mixins import ObjectViewedMixin
 
 class ProductFeaturedListView(ListView):
     template_name = "products/list.html"
@@ -28,16 +28,21 @@ class ProductHotDealsListView(ListView):
     def get_queryset(self, *args, **kwargs):
         request = self.request
         return Product.objects.all().hot_deals()
+# class ProductFeaturedDetailView(ObjectViewedMixin,DetailView):
 
-class ProductFeaturedDetailView(ObjectViewedMixin,DetailView):
+class ProductFeaturedDetailView(DetailView):
     queryset = Product.objects.all().featured()
     template_name = "products/featured-detail.html"
 
-class ProductNewArrivalsDetailView(ObjectViewedMixin,DetailView):
+# class ProductNewArrivalsDetailView(ObjectViewedMixin,DetailView):
+
+class ProductNewArrivalsDetailView(DetailView):
     queryset = Product.objects.all().featured()
     template_name = "products/featured-detail.html"
 
-class ProductHotDealsDetailView(ObjectViewedMixin,DetailView):
+# class ProductHotDealsDetailView(ObjectViewedMixin,DetailView):
+
+class ProductHotDealsDetailView(DetailView):
     queryset = Product.objects.all().featured()
     template_name = "products/featured-detail.html"
 
@@ -117,8 +122,10 @@ class ProductListView(ListView):
         request = self.request
         return Product.objects.all()
 
+''' FOR ANALYTICS'''
+# class ProductDetailSlugView(ObjectViewedMixin, DetailView):
 
-class ProductDetailSlugView(ObjectViewedMixin, DetailView):
+class ProductDetailSlugView(DetailView):
     queryset = Product.objects.all()
     template_name = "products/detail.html"
 

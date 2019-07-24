@@ -2,13 +2,14 @@
 
 {% block content %}
 <h1>Cart</h1>
-{% if cart.products.exists%}
+{% if cart.products.exists %}
 <table class="table cart-table">
         <thead>
           <tr>
             <th scope="col">#</th>
             <th scope="col">Product Name</th>
-            <th scope="col">Product Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Item Price</th>
           </tr>
         </thead>
         <tbody class="cart-body">
@@ -17,35 +18,45 @@
             <th scope="row">{{ forloop.counter }}</th>
             <td class="text-left">
                 <div class="ml-5">
-                <a href='{{ product.get_absolute_url }}' class="">{{ product.title }}</a>
-                {% include 'carts/snippets/remove-product.html' with product_id=product.id %}
+                <a href='{{ product.item.get_absolute_url }}' class="">{{ product.item.title }}</a>
+                {% include 'carts/snippets/remove-product.html' with product_id=product.item.id %}
                 </div>
             </td>
-            <td>${{ product.price }}</td>
+            <td>
+              <form class="form-product-ajax " method="POST" action='{% url "cart:update" %}' data-endpoint='{% url "cart:update" %}'class="form">{% csrf_token %}
+            <input id="product_id" type="hidden" name='product_id' value='{{ product.item.id }}' />
+                {% include 'carts/snippets/quantity-adder.html' with cart_item=product %}
+              </form>
+            </td>
+            <td>${{ product.item.price }}</td>
           </tr>
           {% endfor %}
 
         <tr>
-            <td colspan="2"></td>
-            <td><b>Subtotal</b> $<span class="cart-subtotal">{{ cart.subtotal }}</span> </td>
+            <td colspan="3"></td>
+            <td><b>Subtotal</b> $<span class="cart-subtotal">{{ cart.get_subtotal }}</span> </td>
           </tr>
           <tr>
-            <td colspan="2"></td>
-              <td><b>Total</b> $<span class="cart-total">{{ cart.total }}</span> </td>
+            <td colspan="3"></td>
+              <td><b>Total</b> $<span class="cart-total">{{ cart.get_total|floatformat:'2' }}    </span> </td>
+            }
           </tr>
           <tr>
-              <td colspan="2"></td>
+              <td colspan="3">
+                      
+              </td>
               <td><a href="{% url "cart:checkout" %}" class="btn btn-lg btn-success">Checkout</a> </td>
             </tr>
         </tbody>
       </table>
         
         <div class="cart-item-remove-form" style="display: none">
-            {% include 'carts/snippets/remove-product.html'  %}
+            {% include 'carts/snippets/remove-product.html' %}
         </div>
 
 
       {% else %}
         <p class='lead'>Cart is empty.</p>
       {% endif %}
+
 {% endblock %}

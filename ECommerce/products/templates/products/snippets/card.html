@@ -1,6 +1,9 @@
+
+
+
 <a href="{{ instance.get_absolute_url }}">
 
-<div class="card" style="width: 10rem;">
+<div class="card" style="width: 13rem;">
     {% if instance.image %}
         <a href="{{ instance.get_absolute_url }}">
 
@@ -22,7 +25,6 @@
   </div>
     <div class="row  pb-4 pt-auto">
         <div class="col">
-            
             {% include 'products/snippets/update-cart.html' with product=instance cart=cart %}
         </div>
     </div>

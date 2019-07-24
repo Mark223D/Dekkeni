@@ -4,53 +4,77 @@
 {% url 'register'  as register_url %}
 {% url 'cart'  as cart_url %}
 {% url 'logout'  as logout_url %}
+{% load static %}
 
+<div >
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container" >
+      <div class="row">
+        <a class="navbar-brand" href="{{ home_url }}" style="color: #FF0000;">
+          <img src="{% static 'img/dekkeni_logo.png'%}" width="30" height="30" class="d-inline-block align-top" alt="">
+        {% if brand_name %} {{ brand_name }} {%else%} Dekkeni {% endif %}</a>
+      </a>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    {% include 'search/snippets/search-form.html'%}
 
-<div>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" style="">
-  <div class="container">
-<div class="row">
-  <a class="navbar-brand" href="{{home_url}}">
-        <img src="http://getbootstrap.com/docs/4.3/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto mr-0">
 
-  {% if brand_name %} {{ brand_name }} {%else%}Mark Ecommerce{% endif %}</a>
-  </a>
-  </div>
+        <li class="nav-item {% if request.path == cart_url %} active {%endif%} ">
+          <a class="nav-link " href="{{ cart_url }}"> <span class="navbar-cart-count">{{ request.session.cart_items }} </span><i class="fas fa-shopping-cart"></i></a>
+        </li>
 
-  {% include 'search/snippets/search-form.html'%}
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav ml-auto mr-0">
-
-      <li class="nav-item {% if request.path == cart_url %} active {%endif%} ">
-        <a class="nav-link " href="{{ cart_url }}"> <span class="navbar-cart-count">{{ request.session.cart_items }} </span><i class="fas fa-shopping-cart"></i></a>
-      </li>
-      
-      {% if request.user.is_authenticated %}
-      <li class="nav-item {% if request.path == logout_url %} active {%endif%}">
-        <a class="nav-link " href="{{ logout_url }}">Logout</a>
-      </li>
-      {% else %}
-      <li class="nav-item {% if request.path == register_url %} active {%endif%}">
+        {% if request.user.is_authenticated %}
+        <li class="nav-item {% if request.path == logout_url %} active {%endif%}">
+          <a class="nav-link " href="{{ logout_url }}">Logout</a>
+        </li>
+        {% else %}
+        <li class="nav-item {% if request.path == register_url %} active {%endif%}">
           <a class="nav-link " href="{{ register_url }}">Register</a>
         </li>
-      <li class="nav-item {% if request.path == login_url %} active {%endif%}   ">
-        <a class="nav-link " href="{{ login_url }}">Login</a>
-      </li>
-      {% endif %}
-    </ul>
+        <li class="nav-item {% if request.path == login_url %} active {%endif%}   ">
+          <a class="nav-link " href="{{ login_url }}">Login</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
 
 
-  </div>
-  
+  </nav>
 
-</nav>
 
-    <div class="row mt-5" style="" >
-      <div class="col-12 mt-4 " style="color: #000;">
+  <style type="text/css">
+
+    @media (max-width: 767px) {
+      .categories {
+        padding-top: 30px;
+      }
+
+
+    </style>
+
+
+    {% include "base/js.html" %}
+
+    <script type="text/javascript">
+      $(function(){
+        $('.dropdown').hover(function() {
+          $(this).addClass('open');
+        },
+        function() {
+          $(this).removeClass('open');
+        });
+      });
+
+    </script>
+    <div class="row mt-5">
+      <div class="col-12 mt-5 categories" style="color: #000;">
         <ul class="list-unstyled list-group list-group-horizontal-md justify-content-center">
 
-        <li class="dropdown unstyled px" >
+          <li class="dropdown unstyled px" >
             <a href="#" class="nav-item list-group-item list-group-item-action text-center dropdown-toggle inline text-nowrap px-4" 
             style="font-size: 0.65rem; text-transform: uppercase;"
             aria-haspopup="true" aria-expanded="true" role="button" id="categoryDropdown" data-toggle="dropdown">
@@ -59,34 +83,52 @@
 
           <div class="dropdown-menu dropdown-menu-down" aria-labelledby="categoryDropdown">
             {% for category in categories %}
-                <a href="{{ category.get_absolute_url }}" class="dropdown-item" >{{ category.title }}</a>
+            {% if not category.parent %}
+            <a href="{{ category.get_absolute_url }}" class="dropdown-item" >{{ category.name }}</a>
+            {% endif %}
+
             {% endfor %}
           </div>
 
 
           {% for category in categories %}
-              <li class="dropdown unstyled">
-                  <a href="{{ category.get_absolute_url }}" class="nav-item list-group-item list-group-item-action text-center dropdown inline text-nowrap px-4" style="font-size: 0.65rem; text-transform: uppercase;" aria-haspopup="true" aria-expanded="true" id="categoryDropdown">
-                    <b>
-                      {{ category.title }}
-                    </b>
-                  </a>
-
-                  {% for subcategory in subcategories %}
-                    {% if category.title == subcategory.category.title %}
-                      <div class="dropdown-menu dropdown-menu-down" aria-labelledby="categoryDropdown">
-                        {% for subcategory in subcategories %}
-                          {% if category.title == subcategory.category.title %}
-                            <a href="{{ subcategory.get_absolute_url }}" class="dropdown-item" >{{ subcategory.title }}</a>
-                            {% endif %}
-                        {% endfor %}
-                      </div>
-                    {% endif %}
-                  {% endfor %}
-          {% endfor %}
-      </ul>
+          {% if not category.parent %}
+          <li class="dropdown unstyled menu">
+            <a href="{{ category.get_absolute_url }}" class="nav-item list-group-item list-group-item-action text-center dropdown inline text-nowrap px-4" style="font-size: 0.65rem; text-transform: uppercase;" aria-haspopup="true" aria-expanded="true" id="categoryDropdown">
+              <b>
+                {{ category.title }}
+              </b>
+            </a>
+            {% endif %}
+            <div class="dropdown-menu dropdown-menu-down " aria-labelledby="categoryDropdown">
+            {% for subcat in categories %}
+              {% if subcat.parent.name == category.name %}
+              <a href="{{ subcat.get_absolute_url }}" class="dropdown-item" style="" >{{ subcat.title }}</a>
+              {% endif %}
+              {% endfor %}
+            </div>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+              removeEmptyDropDown()
+        function removeEmptyDropDown(){
+        var dropdowns = $(".menu")
+        var menu = $(".dropdown-menu")
+        for (var i = menu.length - 1; i >= 0; i--) {
+          if(menu[i].firstElementChild == null){
+            menu[i].remove()
+          }
+        }
+      }
+
+      });
+      
+
+    </script>
 
 

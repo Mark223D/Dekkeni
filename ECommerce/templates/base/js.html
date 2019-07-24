@@ -8,4 +8,188 @@
 <script src="{% static 'js/ecommerce.js' %}"></script>
 <script src="{% static 'js/csrf.ajax.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/1.0.3/jsrender.min.js"></script>
+<script type="text/javascript">
+  
+  function incrementValue(e) {
+    e.preventDefault();
+    var fieldName = $(e.target).data('field');
+    var parent = $(e.target).closest('div');
+    var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+
+    if (!isNaN(currentVal)) {
+      parent.find('input[name=' + fieldName + ']').val(currentVal + 1);
+    } else {
+      parent.find('input[name=' + fieldName + ']').val(0);
+    }
+    var thisForm = $(this);
+    var actionEndpoint = '/cart/update/';
+    var httpMethod = 'POST';
+    var product_id = $(e.target).parent().parent().parent().parent().parent().parent().find('#product_id')[0].value;
+    $.ajax({
+      url: actionEndpoint,
+      method: httpMethod,
+      data: {
+        product_id: product_id,
+        quantity: currentVal+1,
+ 
+      },
+      success: function(data) {
+        console.log("Incrementing: Value");      
+        var navbarCount = $(".navbar-cart-count");
+        navbarCount.text(data.cartItemCount);
+        var currentPath = window.location.href;
+        if (currentPath.indexOf("cart") != -1) {
+          refreshCart()
+        }
+
+      },
+      error: function(errorData) {
+        $.alert({
+          title: "Oops",
+          content: "An error occurred. ",
+          theme: "modern",
+        });
+        console.log("error");
+        console.log(errorData);
+      }
+
+    })
+
+
+  }
+
+
+  function decrementValue(e) {
+    e.preventDefault();
+    var fieldName = $(e.target).data('field');
+    var parent = $(e.target).closest('div');
+    var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+    
+    if(currentVal != 0)
+    {  
+      console.log("Q != 0")
+      if (!isNaN(currentVal) && currentVal > 0) {
+        parent.find('input[name=' + fieldName + ']').val(currentVal - 1);
+      } else {
+        parent.find('input[name=' + fieldName + ']').val(0);
+        currentVal = 0;
+
+      }
+
+      var thisForm = $(this);
+      var actionEndpoint = '/cart/update/';
+      var httpMethod = 'POST';
+      var product_id = $(e.target).parent().parent().parent().parent().parent().parent().find('#product_id')[0].value;
+      console.log(product_id)
+
+      $.ajax({
+        url: actionEndpoint,
+        method: httpMethod,
+        data: {
+          product_id: product_id,
+          quantity: currentVal-1
+        },
+        success: function(data) {
+          console.log("Decrementing: CartItem Count: "+data.cartItemCount);      
+          var navbarCount = $(".navbar-cart-count");
+          navbarCount.text(data.cartItemCount);
+          var currentPath = window.location.href;
+          if (currentPath.indexOf("cart") != -1) {
+            refreshCart()
+          }
+
+        },
+        error: function(errorData) {
+          $.alert({
+            title: "Oops",
+            content: "An error occurred. ",
+            theme: "modern",
+          });
+          console.log("error");
+          console.log(errorData);
+        }
+
+      })
+    }else{
+        console.log("Q = 0")
+      if (!isNaN(currentVal) && currentVal > 0) {
+        parent.find('input[name=' + fieldName + ']').val(currentVal - 1);
+      } else {
+        parent.find('input[name=' + fieldName + ']').val(0);
+        currentVal = 0;
+
+      }
+
+      var thisForm = $(this);
+      var actionEndpoint = '/cart/update/';
+      var httpMethod = 'POST';
+      var product_id = $('#product_id')[0].value;
+
+
+      $.ajax({
+        url: actionEndpoint,
+        method: httpMethod,
+        data: {
+          product_id: product_id,
+          quantity: currentVal,
+          remove: 1
+        },
+        success: function(data) {
+          console.log("Decrementing: CartItem Count: "+data.cartItemCount);      
+          var navbarCount = $(".navbar-cart-count");
+          navbarCount.text(data.cartItemCount);
+          refreshCart()
+
+        },
+        error: function(errorData) {
+          $.alert({
+            title: "Oops",
+            content: "An error occurred. ",
+            theme: "modern",
+          });
+          console.log("error");
+          console.log(errorData);
+        }
+
+      })
+
+    }
+  }
+
+  function refreshCart() {
+    var cartTable = $('.cart-table');
+    var cartBody = cartTable.find('.cart-body');
+    var productRow = cartBody.find(".cart-product");
+    var subtotal = cartBody.find(".cart-subtotal");
+    var total = cartBody.find(".cart-total");
+    var refreshCartUrl = "/api/cart/";
+    var refreshMethod = "GET";
+    var data = {};
+    var currentUrl = window.location.href;
+
+    $.ajax({
+      url: refreshCartUrl,
+      method: refreshMethod,
+      data: data,
+      success: function(data) {
+          window.location.href = currentUrl;
+
+
+      },
+      error: function(errorData) {
+        $.alert({
+          title: "Oops",
+          content: "An error occurred. ",
+          theme: "modern",
+        });
+
+        console.log("error");
+        console.log(errorData);
+
+      }
+    })
+  }
+
+</script>
+
 {% include 'base/js_templates.html' %}

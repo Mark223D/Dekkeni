@@ -13,8 +13,6 @@ def get_file_name_ext(filename):
 
 
 def upload_image_path(instance, filename):
-    # print(instance)
-    # print(filename)
     new_filename = random.randint(1, 123456789)
     name, ext = get_file_name_ext(filename)
     final_filename = f'{new_filename}{ext}'#.format(new_filename, ext=ext)
@@ -49,32 +47,10 @@ class ProductQuerySet(models.QuerySet):
 
 class CategoryQuerySet(models.QuerySet):
     def active(self):
-        return self.filter(active=True)
+        return self
 
     def search(self, query):
-        
-        lookups= (Q(title__contains=query) )
-
-        return self.filter(lookups).distinct()
-
-class SubcategoryQuerySet(models.QuerySet):
-    def active(self):
-        return self.filter(active=True)
-
-    def search(self, query):
-        
-        lookups= (Q(title__contains=query))
-
-        return self.filter(lookups).distinct()
-
-class SubsubQuerySet(models.QuerySet):
-    def active(self):
-        return self.filter(active=True)
-
-    def search(self, query):
-        
-        lookups= (Q(title__contains=query))
-
+        lookups = (Q(name__contains=query) )
         return self.filter(lookups).distinct()
 
 
@@ -100,7 +76,7 @@ class ProductManager(models.Manager):
 class CategoryManager(models.Manager):
 
     def all(self):
-        return self.get_queryset().active() 
+        return self.get_queryset() 
     def get_queryset(self):
         return CategoryQuerySet(self.model, using=self._db)
 
@@ -110,96 +86,71 @@ class CategoryManager(models.Manager):
             return qs.first()
         return None
     def search(self, query):
-        return self.get_queryset().active().search(query)
-
-class SubcategoryManager(models.Manager):
-
-    def all(self):
-        return self.get_queryset().active() 
-    def get_queryset(self):
-        return SubcategoryQuerySet(self.model, using=self._db)
-
-    def get_by_id(self, id):
-        qs = self.get_queryset().filter(id=id)
-        if qs.count() == 1:
-            return qs.first()
-        return None
-    def search(self, query):
-        return self.get_queryset().active().search(query)
-
-class SubsubcategoryManager(models.Manager):
-
-    def all(self):
-        return self.get_queryset().active() 
-    def get_queryset(self):
-        return SubsubcategoryQuerySet(self.model, using=self._db)
-
-    def get_by_id(self, id):
-        qs = self.get_queryset().filter(id=id)
-        if qs.count() == 1:
-            return qs.first()
-        return None
-    def search(self, query):
-        return self.get_queryset().active().search(query)
-
+        return self.get_queryset().search(query)
 
 class Category(models.Model):
-    title       = models.CharField(max_length=120)
-    slug        = models.SlugField(blank=True, unique=True)
+        name = models.CharField(max_length=200, default='')
+        slug = models.SlugField(default='category-name')
+        parent = models.ForeignKey('self', blank=True, null=True, related_name='child', on_delete=models.CASCADE)
+        description = models.TextField(blank=True,help_text="Optional")
+        
+        objects = CategoryManager()
+
+        class Admin:
+                list_display = ('name', '_parents_repr')
+                search_fields = ('Category__parent_name', 'Category__parent_slug')
+        
+        def __str__(self):
+                p_list = self._recurse_for_parents(self)
+                p_list.append(self.name)
+                return self.get_separator().join(p_list)
+
+        def __unicode__(self):
+            return self.title
+
+        @property
+        def title(self):
+            return self.name
+
+        def get_absolute_url(self):
+                if self.parent_id:
+                        return reverse("products:subcategories", kwargs={"parent_slug": self.parent.slug, "slug":self.slug})
+                else:
+                        return reverse("products:categories", kwargs={"slug":self.slug})
+        
+        def _recurse_for_parents(self, cat_obj):
+                p_list = []
+                if cat_obj.parent_id:
+                        p = cat_obj.parent
+                        p_list.append(p.name)
+                        more = self._recurse_for_parents(p)
+                        p_list.extend(more)
+                if cat_obj == self and p_list:
+                        p_list.reverse()
+                return p_list
+                
+        def get_separator(self):
+                return ' - '
+        
+        def _parents_repr(self):
+                p_list = self._recurse_for_parents(self)
+                return self.get_separator().join(p_list)
+
+        _parents_repr.short_description = "Tag parents"
+        
+        def save(self):
+                p_list = self._recurse_for_parents(self)
+                if self.name in p_list:
+                        raise validators.ValidationError("You must not save a category in itself!")
+                super(Category, self).save()
 
 
-    def __str__(self):
-        return self.name
 
-    def __unicode__(self):
-        return self.title
-
-    @property
-    def name(self):
-        return self.title
-    def get_absolute_url(self):
-        return reverse("products:categories", kwargs={"slug":self.slug})
-
-
-class Subcategory(models.Model):
-    title       = models.CharField(max_length=120)
-    slug        = models.SlugField(blank=True, unique=True)
-    category    = models.ForeignKey(Category, on_delete=models.DO_NOTHING, null=True)   
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.title
-
-    @property
-    def name(self):
-        return self.title
-    def get_absolute_url(self):
-        return reverse("products:subcategories",  kwargs={"category": self.category.slug, "slug":self.slug})
-
-class Subsubcategory(models.Model):
-    title       = models.CharField(max_length=120)
-    slug        = models.SlugField(blank=True, unique=True)
-    subcategory    = models.ForeignKey(Subcategory, on_delete=models.DO_NOTHING, null=True)   
-
-    def __str__(self):
-        return self.name
-
-    def __unicode__(self):
-        return self.title
-
-    @property
-    def name(self):
-        return self.title
-
-    def get_absolute_url(self):
-        return reverse("products:subsubcategories",  kwargs={"category": self.subcategory.category.slug,"subcategory": self.subcategory.slug, "slug":self.slug})
 
 class Product(models.Model):
     title       = models.CharField(max_length=120)
     slug        = models.SlugField(blank=True, unique=True)
-    description = models.TextField()
+    description = models.TextField(verbose_name='Product Details')
     price       = models.DecimalField(decimal_places=2, max_digits=10, default=39.99)
     image       = models.ImageField(upload_to=upload_image_path, null=True, blank=True)
     featured    = models.BooleanField(default=False)
@@ -208,19 +159,15 @@ class Product(models.Model):
     active      = models.BooleanField(default=True)
     timestamp   = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, null=True)   
-    subcategory = models.ForeignKey(Subcategory, on_delete=models.DO_NOTHING, null=True, blank=True) 
-    subsubcategory = models.ForeignKey(Subsubcategory, on_delete=models.DO_NOTHING, null=True, blank=True)   
-  
-    
+    in_cart         = models.BooleanField(default=False)
 
     objects = ProductManager()
 
     def get_absolute_url(self):
-        print(self.category)
-        if not self.subsubcategory:
-            return reverse("products:detail-no-subsub", kwargs={"category": self.category.slug,"subcategory": self.subcategory.slug, "slug":self.slug})
+        if not self.category.parent.parent:
+            return reverse("products:detail-no-subsub", kwargs={"category": self.category.parent.slug,"subcategory": self.category.slug, "slug":self.slug})
         else:            
-            return reverse("products:detail", kwargs={"category": self.category.slug,"subcategory": self.subcategory.slug,"subsubcategory": self.subsubcategory.slug, "slug":self.slug})
+            return reverse("products:detail", kwargs={"category": self.category.parent.slug,"subcategory": self.catgeory.parent.slug,"subsubcategory": self.category.parent.parent.slug, "slug":self.slug})
 
     def __str__(self):
         return self.title
@@ -243,15 +190,3 @@ def category_pre_save_receiver(sender, instance, *args, **kwargs):
         instance.slug = unique_slug_generator(instance)
 
 pre_save.connect(category_pre_save_receiver, sender=Category)
-
-def subcategory_pre_save_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = unique_slug_generator(instance)
-
-pre_save.connect(subcategory_pre_save_receiver, sender=Subcategory)
-
-def subsubcategory_pre_save_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        instance.slug = unique_slug_generator(instance)
-
-pre_save.connect(subsubcategory_pre_save_receiver, sender=Subsubcategory)

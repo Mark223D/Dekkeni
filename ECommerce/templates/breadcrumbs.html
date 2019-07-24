@@ -1,38 +1,37 @@
 
 <nav aria-label="breadcrumb" >
     <ol class="breadcrumb" style="background-color: #fff;" >
-    {% if category %}
-     {% for obj in categories %}
-            
-                {% if category == obj.slug %} 
-                        <li class="breadcrumb-item {% if not subcategory %}active{% endif %}"><a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a></li>
-                {% endif %}
-            
-        {% endfor %}
+<style type="text/css">
+    a {
+        color: #495057;
+    }
 
-        {% if subcategory %}
-            {% for obj in subcategories %}
-                        {% if subcategory == obj.slug %} 
-                        <li class="breadcrumb-item {% if not subsubcategory %}active{% endif %}"><a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a></li>
-                        {% endif %}
-            {% endfor %}
-        {% endif %}
-             
-        {% if subsubcategory %}
-                {% for obj in subsubcategories %}
-                    {% if subsubcategory == obj.slug %} 
-                        <li class="breadcrumb-item {% if not product %} active {% endif %}"><a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a></li>
-                    {% endif %}
-            {% endfor %}
+    a:hover {
+        color: #495057;
+    }
+</style>
+        {% if not object %}
+
+            {% if category %}
+                <li class="breadcrumb-item {% if not subcategory %} active {% endif %}"><a href="{{ object_list.first.category.parent.get_absolute_url }}">{{ object_list.first.category.parent.title }}</a></li>
+            {% endif %}  
+            
+            {% if subcategory %}
+                <li class="breadcrumb-item {% if not product %} active {% endif %}"><a href="{{ object_list.first.category.get_absolute_url }}">{{ object_list.first.category.title }}</a></li>
+            {% endif %}  
+
+        {% else %}
+
+                <li class="breadcrumb-item {% if not subcategory %} active {% endif %}"><a href="{{ object.category.parent.get_absolute_url }}">{{ object.category.parent.title }}</a></li>
+                
+                {% if subcategory %}
+                <li class="breadcrumb-item {% if not product %} active {% endif %}"><a href="{{ object.category.get_absolute_url }}">{{ object.category.title }}</a></li>
+                {% endif %}  
+                
+                <li class="breadcrumb-item active"><a href="{{ object.get_absolute_url }}">{{ object.title }}</a>
+                </li>
+
         {% endif %}
 
-        {% if product %}
-                {% for obj in object_list %}
-                    {% if product == obj.slug %} 
-                        <li class="breadcrumb-item active" aria-current="page">{{ obj.title }}</li>                        
-                    {% endif %}
-            {% endfor %}
-        {% endif %}
-    {% endif %}
   </ol>
 </nav>

@@ -92,13 +92,12 @@ $(document).ready(function () {
 						alert(successMsg)
 					}
 
-					payBtn.html(payBtnHtml)
-					payBtn.attr('class',payBtnClasses)
 					redirectToNext(nextUrl, 5000)
 
 				},
 				error: function(errorData){
 					console.log(errorData)
+					$.alert({title: "An error occured.", content:"Please try again."})
 					currentTimeout = displayBtnStatus(
 						errorHtml,
 						errorClasses, 

@@ -10,7 +10,7 @@
             <img src="{{ instance.image.url }}" class="card-img-top py-4 img-thumbnail img-responsive" alt="{{ instance.title }}">
         </a>
     {% endif %}
-  <div class="card-body text-center" style="height: 10em">
+  <div class="card-body text-center" style="height: 10">
       <h6 class="card-title"><b>{{ instance.title|truncatewords:4 }}</b></h6>
       <p class="card-text ">{{ instance.description | truncatewords:5 }}</p>
 
@@ -23,10 +23,8 @@
       <!--</div>-->
       
   </div>
-    <div class="row  pb-4 pt-auto">
-        <div class="col">
+    <div class=" ml-2 pb-4 pt-auto">
             {% include 'products/snippets/update-cart.html' with product=instance cart=cart %}
-        </div>
     </div>
 </div>
 </a>

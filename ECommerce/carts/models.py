@@ -47,7 +47,7 @@ class CartItemManager(models.Manager):
     
     
     def new(self, item):
-        return self.model.objects.create(item=item)
+        return self.model.objects.create(item=item, quantity=1)
 
 
         

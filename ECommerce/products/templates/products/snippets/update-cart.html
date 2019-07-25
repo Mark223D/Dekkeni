@@ -2,8 +2,12 @@
 	<input id="product_id" type="hidden" name='product_id' value='{{ product.id }}' />
     <span class="submit-span">
         {% if product.in_cart %}
+        	{% for cart_item in cart.products.all %}
+        		{% if cart_item.item  == product %}
+        		        	{% include 'carts/snippets/quantity-adder.html' with cart_item=cart_item %}
+        		{% endif %}
+        	{% endfor %}
 
-            {% include 'carts/snippets/quantity-adder.html' %}
         {% else %}
             <button class="btn btn-success" type="submit" >Add To Cart</button>
             <input id="quantity" type="hidden" name='quantity' value='1' />

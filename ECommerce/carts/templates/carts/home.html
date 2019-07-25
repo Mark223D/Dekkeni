@@ -23,10 +23,12 @@
                 </div>
             </td>
             <td>
-              <form class="form-product-ajax " method="POST" action='{% url "cart:update" %}' data-endpoint='{% url "cart:update" %}'class="form">{% csrf_token %}
-            <input id="product_id" type="hidden" name='product_id' value='{{ product.item.id }}' />
+                <form class="form-product-ajax " method="POST" action='{% url "cart:update" %}' data-endpoint='{% url "cart:update" %}'class="">{% csrf_token %}
+                <input id="product_id" type="hidden" name='product_id' value='{{ product.item.id }}' />
                 {% include 'carts/snippets/quantity-adder.html' with cart_item=product %}
               </form>
+
+              
             </td>
             <td>${{ product.item.price }}</td>
           </tr>
@@ -39,7 +41,7 @@
           <tr>
             <td colspan="3"></td>
               <td><b>Total</b> $<span class="cart-total">{{ cart.get_total|floatformat:'2' }}    </span> </td>
-            }
+            
           </tr>
           <tr>
               <td colspan="3">

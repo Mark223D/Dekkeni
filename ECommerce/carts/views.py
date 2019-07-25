@@ -81,6 +81,7 @@ def cart_update(request):
                 added = update_quantity(cart_item_obj=cart_item_obj, quantity=quantity)
 
             product_obj.in_cart = added
+            product_obj.save()
         #if cartItem containing product is not found
         elif cart_item_coll.count() <= 0 and quantity == 1:
             cart_item , added = create_cart_item(product_obj=product_obj, cart_obj=cart_obj)
@@ -88,6 +89,7 @@ def cart_update(request):
         #counter of the cart is on sum of cartItem quantities
         count = cart_obj.cart_item_count()
         request.session['cart_items'] = count
+        product_obj.in_cart = added
         cart_obj.save()
 
         if request.is_ajax():
@@ -149,7 +151,6 @@ def create_cart_item(product_obj, cart_obj):
 
     #product is added to cart            
     added = True
-    product_obj=True
     return cart_item, added
 
 

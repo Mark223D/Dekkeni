@@ -82,7 +82,6 @@
           </a>
 
           <div class="dropdown-menu dropdown-menu-down" aria-labelledby="categoryDropdown">
-            {{categories}}
             {% for category in categories %}
             {% if not category.parent %}
             <a href="{{ category.get_absolute_url }}" class="dropdown-item" >{{ category.name }}</a>

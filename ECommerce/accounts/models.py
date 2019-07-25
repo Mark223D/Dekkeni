@@ -3,10 +3,9 @@ from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     )
-# from django.contrib.auth.models import PermissionsMixin
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, full_name=None, password=None, is_active=True, is_staff=False, is_admin=False):
+    def create_user(self, email, full_name=None, password=None, is_staff=False, is_superuser=False, is_admin=False):
         if not email:
             raise ValueError("Users must have an email address")
         if not password:
@@ -18,7 +17,7 @@ class UserManager(BaseUserManager):
         user_obj.set_password(password) # change user password
         user_obj.staff = is_staff
         user_obj.admin = is_admin
-        user_obj.is_active = is_active
+        user_obj.superuser = is_superuser
         user_obj.save(using=self._db)
         return user_obj
 
@@ -27,7 +26,7 @@ class UserManager(BaseUserManager):
                 email,
                 full_name=full_name,
                 password=password,
-                is_staff=True
+                is_staff=True,
         )
         return user
 
@@ -37,7 +36,8 @@ class UserManager(BaseUserManager):
                 full_name=full_name,
                 password=password,
                 is_staff=True,
-                is_admin=True
+                is_admin=True,
+                is_superuser=True
         )
         return user
 
@@ -47,6 +47,7 @@ class User(AbstractBaseUser):
     full_name   = models.CharField(max_length=255, blank=True, null=True)
     is_active   = models.BooleanField(default=True) # can login 
     staff       = models.BooleanField(default=False) # staff user non superuser
+    superuser   = models.BooleanField(default=False) # staff user non superuser
     admin       = models.BooleanField(default=False) # superuser 
     timestamp   = models.DateTimeField(auto_now_add=True)
     # confirm     = models.BooleanField(default=False)
@@ -80,15 +81,12 @@ class User(AbstractBaseUser):
         if self.is_admin:
             return True
         return self.staff
-
     @property
     def is_admin(self):
         return self.admin
-
-    # @property
-    # def is_active(self):
-    #     return self.active
-
+    @property
+    def is_superuser(self):
+        return self.superuser
 
 
 # class Profile(models.Model):

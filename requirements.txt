@@ -35,8 +35,8 @@ oauthlib==3.0.1
 pbr==5.2.1
 Pillow==6.0.0
 protobuf==3.7.1
-psycopg2==2.4.4
-psycopg2-binary==2.8.2
+psycopg2==2.8.3
+psycopg2-binary==2.8.3
 pyasn1==0.4.5
 pyasn1-modules==0.2.5
 PyJWT==1.7.1

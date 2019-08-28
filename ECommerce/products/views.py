@@ -175,7 +175,6 @@ class ProductDetailSlugView(DetailView):
         try: 
             instance = Product.objects.get(slug=slug, active=True)
             print("DetailView")
-            print(instance.in_cart)
         except Product.DoesNotExist:
             raise Http404("Not Found...")
         except Product.MultipleObjectsReturned:

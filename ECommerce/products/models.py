@@ -59,6 +59,7 @@ class ProductManager(models.Manager):
 
     def all(self):
         return self.get_queryset().active() 
+
     def get_queryset(self):
         return ProductQuerySet(self.model, using=self._db)
 
@@ -70,6 +71,12 @@ class ProductManager(models.Manager):
         if qs.count() == 1:
             return qs.first()
         return None
+
+    def get_by_category(self, category_id):
+        category = Category.objects.get_by_id(id=category_id)
+        qs = self.get_queryset().filter(category=category)
+        return qs
+
     def search(self, query):
         return self.get_queryset().active().search(query)
 
@@ -85,6 +92,9 @@ class CategoryManager(models.Manager):
         if qs.count() == 1:
             return qs.first()
         return None
+
+    
+
     def search(self, query):
         return self.get_queryset().search(query)
 

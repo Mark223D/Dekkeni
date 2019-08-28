@@ -27,7 +27,9 @@ from carts.views import cart_home, cart_detail_api_view
 from accounts.views import LoginView, RegisterView, guest_register_view
 from addresses.views import checkout_address_create_view, checkout_address_reuse_view
 from billing.views import payment_method_view, payment_method_createview
-from marketing.views import MarketingPreferenceUpdateView, MailchimpWebHookView
+from api.views import api_home
+
+# from marketing.views import MarketingPreferenceUpdateView, MailchimpWebHookView
 
 urlpatterns = [
     url(r'^$', home_page, name='home'),
@@ -37,6 +39,7 @@ urlpatterns = [
     url(r'^products/', include(("products.urls", 'products'), namespace="products")),
     url(r'^search/', include(("search.urls", 'search'), namespace="search")),
     url(r'^cart/$', cart_home, name='cart'),
+    url(r'^api/v1/', include(("api.urls", 'api'), namespace='api')),
     url(r'^api/cart/$', cart_detail_api_view, name='api-cart'),
     url(r'^checkout/address/create/$', checkout_address_create_view, name='checkout_address_create'),
     url(r'^checkout/address/reuse/$', checkout_address_reuse_view, name='checkout_address_reuse'),
@@ -47,8 +50,8 @@ urlpatterns = [
     url(r'^register/guest/$', guest_register_view, name='guest_register_view'),
     url(r'^billing/payment-method/$', payment_method_view, name='billing-payment-method'),
     url(r'^billing/payment-method/create/$', payment_method_createview, name='billing-payment-method-endpoint'),
-    url(r'^settings/email/$', MarketingPreferenceUpdateView.as_view(), name='marketing-pref'),
-    url(r'^webhooks/mailchimp/$', MailchimpWebHookView.as_view(), name='webhooks-mailchimp'),
+    # url(r'^settings/email/$', MarketingPreferenceUpdateView.as_view(), name='marketing-pref'),
+    # url(r'^webhooks/mailchimp/$', MailchimpWebHookView.as_view(), name='webhooks-mailchimp'),
 
 
     url(r'^admin/', admin.site.urls, name='admin'),

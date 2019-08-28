@@ -10,7 +10,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('category','featured','hot_deals', 'new_arrivals', 'title')
     list_display_links = ('__str__',)
     fieldsets = (
-        (None, {'fields': ('category', 'title', 'slug', 'featured','hot_deals', 'new_arrivals', 'in_cart', 'image', 'description')}),
+        (None, {'fields': ('category', 'title', 'slug', 'featured','hot_deals', 'new_arrivals', 'image', 'description')}),
        # ('Full name', {'fields': ()}),
         # ('Permissions', {'fields': ('admin', 'staff', 'is_active',)}),
     )

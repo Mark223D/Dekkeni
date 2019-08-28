@@ -1,4 +1,5 @@
 from django import forms
+from allauth.account.forms import SignupForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
@@ -89,4 +90,17 @@ class RegisterForm(forms.ModelForm):
             user.save()
         return user
 
+
+class CustomSignupForm(SignupForm):
+    first_name = forms.CharField(max_length=30, label='First Name')
+    last_name = forms.CharField(max_length=30, label='Last Name')
+    email = forms.EmailField(max_length=30, label='Email')
+
+
+    def signup(self, request, user):
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.email = self.cleaned_data['email']
+        user.save()
+        return user
 

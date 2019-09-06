@@ -134,3 +134,5 @@ class CartView(generics.CreateAPIView):
 
 			serializer = CartSerializer(cart, many=False)
 			return Response({'cart': serializer.data,})
+		else:
+			return Response({'status': ' failed'})

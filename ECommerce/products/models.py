@@ -169,7 +169,6 @@ class Product(models.Model):
     active      = models.BooleanField(default=True)
     timestamp   = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, null=True)   
-    in_cart         = models.BooleanField(default=False)
 
     objects = ProductManager()
 

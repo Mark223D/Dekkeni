@@ -37,7 +37,6 @@ class Migration(migrations.Migration):
                 ('new_arrivals', models.BooleanField(default=False)),
                 ('active', models.BooleanField(default=True)),
                 ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('in_cart', models.BooleanField(default=False)),
                 ('category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='products.Category')),
             ],
         ),
